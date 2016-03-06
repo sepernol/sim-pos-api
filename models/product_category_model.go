@@ -3,7 +3,7 @@ package models
 import (
 	"database/sql"
 	"errors"
-	h "github.com/sepernol/sim-pos/helpers"
+	h "github.com/sepernol/sim-pos-api/helpers"
 )
 
 type ProductCategory struct {

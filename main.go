@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/sepernol/sim-pos/handlers"
+	"github.com/sepernol/sim-pos-api/handlers"
 	"log"
 	"net/http"
 )

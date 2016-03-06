@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	h "github.com/sepernol/sim-pos/helpers"
-	m "github.com/sepernol/sim-pos/models"
+	h "github.com/sepernol/sim-pos-api/helpers"
+	m "github.com/sepernol/sim-pos-api/models"
 	"net/http"
 	"strconv"
 )

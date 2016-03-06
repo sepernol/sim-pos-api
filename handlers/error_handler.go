@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	h "github.com/sepernol/sim-pos/helpers"
+	h "github.com/sepernol/sim-pos-api/helpers"
 	"log"
 	"net/http"
 )
