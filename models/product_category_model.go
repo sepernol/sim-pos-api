@@ -12,7 +12,7 @@ type ProductCategory struct {
 	Description string `json:"description"`
 }
 
-func fetchRows(rows *sql.Rows, paging h.PageParams) (result []ProductCategory, err error) {
+func fetchProductCategories(rows *sql.Rows, paging h.PageParams) (result []ProductCategory, err error) {
 	list := make([]ProductCategory, paging.Size)
 	index := 0
 	for rows.Next() {
@@ -45,14 +45,14 @@ func GetProductCategories(paging h.PageParams) (result []ProductCategory, err er
 	}
 	defer rows.Close()
 
-	result, err = fetchRows(rows, paging)
+	result, err = fetchProductCategories(rows, paging)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func GetProductCategory(id int) (result ProductCategory, err error) {
+func GetProductCategory(id int64) (result ProductCategory, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -67,7 +67,7 @@ func GetProductCategory(id int) (result ProductCategory, err error) {
 	}
 	defer rows.Close()
 
-	list, err := fetchRows(rows, h.PageParams{Size: 1})
+	list, err := fetchProductCategories(rows, h.PageParams{Size: 1})
 	if err != nil {
 		return
 	}
@@ -87,15 +87,39 @@ func InsertProductCategory(data *ProductCategory) (err error) {
 	}
 	defer db.Close()
 
-	result, err := db.Exec("INSERT INTO product_categories (code, description) VALUES (?, ?)", data.Code, data.Description)
+	result, err := h.ExecStatement(db, "INSERT INTO product_categories (code, description) VALUES (?, ?)", data.Code, data.Description)
 	if err != nil {
 		return
 	}
-	data.Id, err = result.LastInsertId()
+	data.Id = result.LastInsertId
+	return
+}
+
+func UpdateProductCategory(data *ProductCategory) (err error) {
+	db, err := h.GetDBConnection()
 	if err != nil {
-		data.Id = 0
+		return
+	}
+	defer db.Close()
+
+	_, err = h.ExecStatement(db, "UPDATE product_categories SET code = ?, description = ? where id = ?", data.Code, data.Description, data.Id)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+func DeleteProductCategory(id int64) (err error) {
+	db, err := h.GetDBConnection()
+	if err != nil {
+		return
+	}
+	defer db.Close()
+
+	_, err = h.ExecStatement(db, "DELETE FROM product_categories where id = ?", id)
+	if err != nil {
 		return
 	}
 	return
-
 }

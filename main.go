@@ -10,11 +10,22 @@ import (
 func main() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/product_categories/{id}", handlers.GetProductCategory).Methods("GET")
-	r.HandleFunc("/product_categories/{size}/page/{page}", handlers.GetProductCategories).Methods("GET")
-	r.HandleFunc("/product_categories", handlers.PostProductCategory).Methods("POST")
+	/**
+	* Product categories
+	* Create, Read, Update, Delete
+	**/
+	pc := r.PathPrefix("/product_categories/").Subrouter()
+	pc.HandleFunc("/{id}", handlers.GetProductCategory).Methods("GET")
+	pc.HandleFunc("/{id}", handlers.PutProductCategory).Methods("PUT")
+	pc.HandleFunc("/{id}", handlers.DeleteProductCategory).Methods("DELETE")
+
+	pc.HandleFunc("/{size}/page/{page}", handlers.GetProductCategories).Methods("GET")
+	pc.HandleFunc("/", handlers.PostProductCategory).Methods("POST")
+	/**
+	* Product categories end
+	**/
 
 	log.Println("Server started")
 
-	http.ListenAndServe(":8080", r)
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
