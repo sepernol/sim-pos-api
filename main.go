@@ -25,6 +25,21 @@ func main() {
 	* Product categories end
 	**/
 
+	/**
+	* Suppliers
+	* Create, Read, Update, Delete
+	**/
+	sup := r.PathPrefix("/suppliers/").Subrouter()
+	sup.HandleFunc("/{id}", handlers.GetSupplier).Methods("GET")
+	sup.HandleFunc("/{id}", handlers.PutSupplier).Methods("PUT")
+	sup.HandleFunc("/{id}", handlers.DeleteSupplier).Methods("DELETE")
+
+	sup.HandleFunc("/{size}/page/{page}", handlers.GetSuppliers).Methods("GET")
+	sup.HandleFunc("/", handlers.PostSupplier).Methods("POST")
+	/**
+	* Suppliers end
+	**/
+
 	log.Println("Server started")
 
 	log.Fatal(http.ListenAndServe(":8080", r))
