@@ -40,6 +40,21 @@ func main() {
 	* Suppliers end
 	**/
 
+	/**
+	* Uoms
+	* Create, Read, Update, Delete
+	**/
+	u := r.PathPrefix("/uoms/").Subrouter()
+	u.HandleFunc("/{id}", handlers.GetUom).Methods("GET")
+	u.HandleFunc("/{id}", handlers.PutUom).Methods("PUT")
+	u.HandleFunc("/{id}", handlers.DeleteUom).Methods("DELETE")
+
+	u.HandleFunc("/{size}/page/{page}", handlers.GetUoms).Methods("GET")
+	u.HandleFunc("/", handlers.PostUom).Methods("POST")
+	/**
+	* Uoms end
+	**/
+
 	log.Println("Server started")
 
 	log.Fatal(http.ListenAndServe(":8080", r))
