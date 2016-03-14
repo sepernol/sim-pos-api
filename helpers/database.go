@@ -4,11 +4,41 @@ import (
 	"database/sql"
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
+	"os"
 	"strconv"
 )
 
+const (
+	DEFAULT_DB_USER    = "root"
+	DEFAULT_DB_PASS    = "1234"
+	DEFAULT_DB_NAME    = "sim_pos"
+	DEFAULT_DB_ADDRESS = "localhost"
+	DEFAULT_DB_PORT    = "3306"
+)
+
 func GetDBConnection() (db *sql.DB, err error) {
-	db, err = sql.Open("mysql", "root:1234@tcp/sim_pos")
+	dbUser := os.Getenv("SIM_POS_DB_USER")
+	if dbUser == "" {
+		dbUser = DEFAULT_DB_USER
+	}
+	dbPass := os.Getenv("SIM_POS_DB_PASS")
+	if dbPass == "" {
+		dbPass = DEFAULT_DB_PASS
+	}
+	dbName := os.Getenv("SIM_POS_DB_NAME")
+	if dbName == "" {
+		dbName = DEFAULT_DB_NAME
+	}
+	dbAddress := os.Getenv("SIM_POS_DB_ADDRESS")
+	if dbAddress == "" {
+		dbAddress = DEFAULT_DB_ADDRESS
+	}
+	dbPort := os.Getenv("SIM_POS_DB_PORT")
+	if dbPort == "" {
+		dbPort = DEFAULT_DB_PORT
+	}
+	connStr := dbUser + ":" + dbPass + "@tcp(" + dbAddress + ":" + dbPort + ")/" + dbName
+	db, err = sql.Open("mysql", connStr)
 	return
 }
 

@@ -5,9 +5,25 @@ import (
 	"github.com/sepernol/sim-pos-api/handlers"
 	"log"
 	"net/http"
+	"os"
+)
+
+const (
+	DEFAULT_PORT = "8080"
 )
 
 func main() {
+	r := CreateRoute()
+
+	port := os.Getenv("SIM_POS_LISTEN_PORT")
+	if port == "" {
+		port = DEFAULT_PORT
+	}
+	log.Println("Server started on Port: " + port)
+	log.Fatal(http.ListenAndServe(":"+port, r))
+}
+
+func CreateRoute() *mux.Router {
 	r := mux.NewRouter()
 
 	/**
@@ -61,9 +77,7 @@ func main() {
 	pr := r.PathPrefix("/products/").Subrouter()
 	ProductRouter(pr)
 
-	log.Println("Server started")
-
-	log.Fatal(http.ListenAndServe(":8080", r))
+	return r
 }
 
 /**
