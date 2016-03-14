@@ -58,7 +58,7 @@ func DeleteProductUom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idStrUom := h.GetQueryParam(r, "id")
+	idStrUom := h.GetQueryParam(r, "uom_id")
 	uomId, err := strconv.ParseInt(idStrUom, 10, 64)
 	if err != nil {
 		handleError(err, w)

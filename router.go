@@ -75,6 +75,7 @@ func ProductRouter(pr *mux.Router) {
 	pr.HandleFunc("/{id}", handlers.DeleteProduct).Methods("DELETE")
 
 	ProductUomRouter(pr.PathPrefix("/{id}/uoms").Subrouter())
+	ProductUnitPriceRouter(pr.PathPrefix("/{id}/unit_prices").Subrouter())
 }
 
 /**
@@ -85,4 +86,15 @@ func ProductUomRouter(pru *mux.Router) {
 	pru.HandleFunc("/", handlers.GetProductUoms).Methods("GET")
 	pru.HandleFunc("/", handlers.AddProductUom).Methods("POST")
 	pru.HandleFunc("/{uom_id}", handlers.DeleteProductUom).Methods("DELETE")
+}
+
+/**
+* Products Unit Price
+* Create, Read, Update, Delete
+**/
+func ProductUnitPriceRouter(up *mux.Router) {
+	up.HandleFunc("/", handlers.GetProductUnitPrices).Methods("GET")
+	up.HandleFunc("/", handlers.AddProductUnitPrice).Methods("POST")
+	up.HandleFunc("/{uom_id}", handlers.PutProductUnitPrice).Methods("PUT")
+	up.HandleFunc("/{uom_id}", handlers.DeleteProductUnitPrice).Methods("DELETE")
 }
