@@ -3,6 +3,7 @@ package handlers
 import (
 	h "github.com/sepernol/sim-pos-api/helpers"
 	m "github.com/sepernol/sim-pos-api/models"
+	repo "github.com/sepernol/sim-pos-api/repositories"
 	"net/http"
 	"strconv"
 )
@@ -26,7 +27,7 @@ func AddProductUom(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	uom, err := m.GetUom(postData.UomId)
+	uom, err := repo.GetUom(postData.UomId)
 	if err != nil {
 		handleError(err, w)
 		return

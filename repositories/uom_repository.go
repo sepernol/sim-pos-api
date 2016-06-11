@@ -1,26 +1,21 @@
-package models
+package repositories
 
 import (
 	"database/sql"
 	"errors"
+	e "github.com/sepernol/sim-pos-api/entities"
 	h "github.com/sepernol/sim-pos-api/helpers"
 )
 
-type Uom struct {
-	Id          int64  `json:"id"`
-	Code        string `json:"code"`
-	Description string `json:"description"`
-}
-
-func fetchUoms(rows *sql.Rows, paging h.PageParams) (result []Uom, err error) {
-	list := make([]Uom, paging.Size)
+func fetchUoms(rows *sql.Rows, paging h.PageParams) (result []e.Uom, err error) {
+	list := make([]e.Uom, paging.Size)
 	index := 0
 	for rows.Next() {
 		if index >= paging.Size {
 			break
 		}
-		var obj Uom
-		err = rows.Scan(&obj.Id, &obj.Code, &obj.Description)
+		var obj e.Uom
+		err = rows.Scan(&obj.ID, &obj.Code, &obj.Description)
 		if err != nil {
 			return
 		}
@@ -31,7 +26,8 @@ func fetchUoms(rows *sql.Rows, paging h.PageParams) (result []Uom, err error) {
 	return
 }
 
-func GetUoms(paging h.PageParams) (result []Uom, err error) {
+//GetUoms gets list of Uom with paging
+func GetUoms(paging h.PageParams) (result []e.Uom, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -52,7 +48,8 @@ func GetUoms(paging h.PageParams) (result []Uom, err error) {
 	return
 }
 
-func GetUom(id int64) (result Uom, err error) {
+//GetUom gets uom by ID
+func GetUom(id int64) (result e.Uom, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -80,7 +77,8 @@ func GetUom(id int64) (result Uom, err error) {
 	return
 }
 
-func InsertUom(data *Uom) (err error) {
+//InsertUom inserts new record in database
+func InsertUom(data *e.Uom) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -91,18 +89,19 @@ func InsertUom(data *Uom) (err error) {
 	if err != nil {
 		return
 	}
-	data.Id = result.LastInsertId
+	data.ID = result.LastInsertId
 	return
 }
 
-func UpdateUom(data *Uom) (err error) {
+//UpdateUom updates record in database
+func UpdateUom(data *e.Uom) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 
-	_, err = h.ExecStatement(db, "UPDATE uoms SET code = ?, description = ? where id = ?", data.Code, data.Description, data.Id)
+	_, err = h.ExecStatement(db, "UPDATE uoms SET code = ?, description = ? where id = ?", data.Code, data.Description, data.ID)
 	if err != nil {
 		return
 	}
@@ -110,6 +109,7 @@ func UpdateUom(data *Uom) (err error) {
 	return
 }
 
+//DeleteUom deletes record from database
 func DeleteUom(id int64) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {

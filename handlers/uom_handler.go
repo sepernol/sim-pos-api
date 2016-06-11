@@ -1,8 +1,9 @@
 package handlers
 
 import (
+	e "github.com/sepernol/sim-pos-api/entities"
 	h "github.com/sepernol/sim-pos-api/helpers"
-	m "github.com/sepernol/sim-pos-api/models"
+	repo "github.com/sepernol/sim-pos-api/repositories"
 	"net/http"
 	"strconv"
 )
@@ -14,7 +15,7 @@ func GetUom(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	result, err := m.GetUom(id)
+	result, err := repo.GetUom(id)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -28,7 +29,7 @@ func GetUoms(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	result, err := m.GetUoms(paging)
+	result, err := repo.GetUoms(paging)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -37,13 +38,13 @@ func GetUoms(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostUom(w http.ResponseWriter, r *http.Request) {
-	postData := &m.Uom{}
+	postData := &e.Uom{}
 	err := h.DecodeJSON(r, postData)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
-	err = m.InsertUom(postData)
+	err = repo.InsertUom(postData)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -52,15 +53,15 @@ func PostUom(w http.ResponseWriter, r *http.Request) {
 }
 
 func PutUom(w http.ResponseWriter, r *http.Request) {
-	postData := &m.Uom{}
+	postData := &e.Uom{}
 	err := h.DecodeJSON(r, postData)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
 	id := h.GetQueryParam(r, "id")
-	postData.Id, err = strconv.ParseInt(id, 10, 64)
-	err = m.UpdateUom(postData)
+	postData.ID, err = strconv.ParseInt(id, 10, 64)
+	err = repo.UpdateUom(postData)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -71,8 +72,8 @@ func PutUom(w http.ResponseWriter, r *http.Request) {
 func DeleteUom(w http.ResponseWriter, r *http.Request) {
 	id := h.GetQueryParam(r, "id")
 	idInt, err := strconv.ParseInt(id, 10, 64)
-	data, err := m.GetUom(idInt)
-	err = m.DeleteUom(idInt)
+	data, err := repo.GetUom(idInt)
+	err = repo.DeleteUom(idInt)
 	if err != nil {
 		handleError(err, w)
 		return

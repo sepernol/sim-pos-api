@@ -8,6 +8,7 @@ import (
 	"strconv"
 )
 
+//GetProduct handles GET method for /products/:id
 func GetProduct(w http.ResponseWriter, r *http.Request) {
 	idStr := h.GetQueryParam(r, "id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -23,6 +24,7 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 	h.ResponseJSON(w, result)
 }
 
+//GetProducts handles GET method for /products/:size/page/:page_no
 func GetProducts(w http.ResponseWriter, r *http.Request) {
 	paging, err := h.GetPageParam(r)
 	if err != nil {
@@ -37,6 +39,7 @@ func GetProducts(w http.ResponseWriter, r *http.Request) {
 	h.ResponseJSON(w, result)
 }
 
+//PostProduct handles POST method for /products
 func PostProduct(w http.ResponseWriter, r *http.Request) {
 	postData := &e.Product{}
 	err := h.DecodeJSON(r, postData)
@@ -52,6 +55,7 @@ func PostProduct(w http.ResponseWriter, r *http.Request) {
 	h.ResponseJSONAndMessage(w, postData, "Product Added")
 }
 
+//PutProduct handles PUT method for /products/:id
 func PutProduct(w http.ResponseWriter, r *http.Request) {
 	postData := &e.Product{}
 	err := h.DecodeJSON(r, postData)
@@ -69,6 +73,7 @@ func PutProduct(w http.ResponseWriter, r *http.Request) {
 	h.ResponseJSONAndMessage(w, postData, "Product updated")
 }
 
+//DeleteProduct handles DELETE method for /products/:id
 func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	id := h.GetQueryParam(r, "id")
 	idInt, err := strconv.ParseInt(id, 10, 64)
