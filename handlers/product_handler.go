@@ -1,8 +1,9 @@
 package handlers
 
 import (
+	e "github.com/sepernol/sim-pos-api/entities"
 	h "github.com/sepernol/sim-pos-api/helpers"
-	m "github.com/sepernol/sim-pos-api/models"
+	repo "github.com/sepernol/sim-pos-api/repositories"
 	"net/http"
 	"strconv"
 )
@@ -14,7 +15,7 @@ func GetProduct(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	result, err := m.GetProduct(id)
+	result, err := repo.GetProduct(id)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -28,7 +29,7 @@ func GetProducts(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	result, err := m.GetProducts(paging)
+	result, err := repo.GetProducts(paging)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -37,13 +38,13 @@ func GetProducts(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostProduct(w http.ResponseWriter, r *http.Request) {
-	postData := &m.Product{}
+	postData := &e.Product{}
 	err := h.DecodeJSON(r, postData)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
-	err = m.InsertProduct(postData)
+	err = repo.InsertProduct(postData)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -52,15 +53,15 @@ func PostProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func PutProduct(w http.ResponseWriter, r *http.Request) {
-	postData := &m.Product{}
+	postData := &e.Product{}
 	err := h.DecodeJSON(r, postData)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
 	id := h.GetQueryParam(r, "id")
-	postData.Id, err = strconv.ParseInt(id, 10, 64)
-	err = m.UpdateProduct(postData)
+	postData.ID, err = strconv.ParseInt(id, 10, 64)
+	err = repo.UpdateProduct(postData)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -71,8 +72,8 @@ func PutProduct(w http.ResponseWriter, r *http.Request) {
 func DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	id := h.GetQueryParam(r, "id")
 	idInt, err := strconv.ParseInt(id, 10, 64)
-	data, err := m.GetProduct(idInt)
-	err = m.DeleteProduct(idInt)
+	data, err := repo.GetProduct(idInt)
+	err = repo.DeleteProduct(idInt)
 	if err != nil {
 		handleError(err, w)
 		return

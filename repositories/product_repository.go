@@ -1,28 +1,21 @@
-package models
+package repositories
 
 import (
 	"database/sql"
 	"errors"
+	e "github.com/sepernol/sim-pos-api/entities"
 	h "github.com/sepernol/sim-pos-api/helpers"
 )
 
-type Product struct {
-	Id         int64  `json:"id"`
-	SKU        string `json:"sku"`
-	Name       string `json:"name"`
-	ShortName  string `json:"short_name"`
-	CategoryId int64  `json:"category_id"`
-}
-
-func fetchProducts(rows *sql.Rows, paging h.PageParams) (result []Product, err error) {
-	list := make([]Product, paging.Size)
+func fetchProducts(rows *sql.Rows, paging h.PageParams) (result []e.Product, err error) {
+	list := make([]e.Product, paging.Size)
 	index := 0
 	for rows.Next() {
 		if index >= paging.Size {
 			break
 		}
-		var obj Product
-		err = rows.Scan(&obj.Id, &obj.SKU, &obj.Name, &obj.ShortName, &obj.CategoryId)
+		var obj e.Product
+		err = rows.Scan(&obj.ID, &obj.SKU, &obj.Name, &obj.ShortName, &obj.CategoryID)
 		if err != nil {
 			return
 		}
@@ -33,7 +26,8 @@ func fetchProducts(rows *sql.Rows, paging h.PageParams) (result []Product, err e
 	return
 }
 
-func GetProducts(paging h.PageParams) (result []Product, err error) {
+//GetProducts gets product list with paging
+func GetProducts(paging h.PageParams) (result []e.Product, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -54,7 +48,8 @@ func GetProducts(paging h.PageParams) (result []Product, err error) {
 	return
 }
 
-func GetProduct(id int64) (result Product, err error) {
+//GetProduct gets product by id
+func GetProduct(id int64) (result e.Product, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -82,29 +77,31 @@ func GetProduct(id int64) (result Product, err error) {
 	return
 }
 
-func InsertProduct(data *Product) (err error) {
+//InsertProduct inserts new record in products
+func InsertProduct(data *e.Product) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 
-	result, err := h.ExecStatement(db, "INSERT INTO products (sku, name, short_name, category_id) VALUES (?, ?, ?, ?)", data.SKU, data.Name, data.ShortName, data.CategoryId)
+	result, err := h.ExecStatement(db, "INSERT INTO products (sku, name, short_name, category_id) VALUES (?, ?, ?, ?)", data.SKU, data.Name, data.ShortName, data.CategoryID)
 	if err != nil {
 		return
 	}
-	data.Id = result.LastInsertId
+	data.ID = result.LastInsertId
 	return
 }
 
-func UpdateProduct(data *Product) (err error) {
+//UpdateProduct updates existing data in products
+func UpdateProduct(data *e.Product) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 
-	_, err = h.ExecStatement(db, "UPDATE products SET sku = ?, name = ?, short_name = ?, category_id = ? where id = ?", data.SKU, data.Name, data.ShortName, data.CategoryId, data.Id)
+	_, err = h.ExecStatement(db, "UPDATE products SET sku = ?, name = ?, short_name = ?, category_id = ? where id = ?", data.SKU, data.Name, data.ShortName, data.CategoryID, data.ID)
 	if err != nil {
 		return
 	}
@@ -112,6 +109,7 @@ func UpdateProduct(data *Product) (err error) {
 	return
 }
 
+//DeleteProduct deletes product record from database
 func DeleteProduct(id int64) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
