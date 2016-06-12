@@ -1,33 +1,34 @@
 package handlers
 
 import (
+	e "github.com/sepernol/sim-pos-api/entities"
 	h "github.com/sepernol/sim-pos-api/helpers"
-	m "github.com/sepernol/sim-pos-api/models"
 	repo "github.com/sepernol/sim-pos-api/repositories"
 	"net/http"
 	"strconv"
 )
 
+//AddProductUom handles POST method of /products/:id/uoms
 func AddProductUom(w http.ResponseWriter, r *http.Request) {
 	idStr := h.GetQueryParam(r, "id")
-	productId, err := strconv.ParseInt(idStr, 10, 64)
+	productID, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
-	postData := &m.ProductUom{}
+	postData := &e.ProductUom{}
 	err = h.DecodeJSON(r, postData)
-	postData.ProductId = productId
+	postData.ProductID = productID
 	if err != nil {
 		handleError(err, w)
 		return
 	}
-	err = m.InsertProductUom(postData)
+	err = repo.InsertProductUom(postData)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
-	uom, err := repo.GetUom(postData.UomId)
+	uom, err := repo.GetUom(postData.UomID)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -36,6 +37,7 @@ func AddProductUom(w http.ResponseWriter, r *http.Request) {
 	h.ResponseJSONAndMessage(w, postData, "Product UOM Added")
 }
 
+//GetProductUoms handles GET method of /products/:id/uoms
 func GetProductUoms(w http.ResponseWriter, r *http.Request) {
 	idStr := h.GetQueryParam(r, "id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -43,7 +45,7 @@ func GetProductUoms(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	result, err := m.GetProductUoms(id)
+	result, err := repo.GetProductUoms(id)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -51,26 +53,27 @@ func GetProductUoms(w http.ResponseWriter, r *http.Request) {
 	h.ResponseJSON(w, result)
 }
 
+//DeleteProductUom handles DELETE method of /products/:id/uoms/:uom_id
 func DeleteProductUom(w http.ResponseWriter, r *http.Request) {
 	idStrProd := h.GetQueryParam(r, "id")
-	productId, err := strconv.ParseInt(idStrProd, 10, 64)
+	productID, err := strconv.ParseInt(idStrProd, 10, 64)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
 
 	idStrUom := h.GetQueryParam(r, "uom_id")
-	uomId, err := strconv.ParseInt(idStrUom, 10, 64)
+	uomID, err := strconv.ParseInt(idStrUom, 10, 64)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
-	data, err := m.GetProductUom(productId, uomId)
+	data, err := repo.GetProductUom(productID, uomID)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
-	err = m.DeleteProductUom(productId, uomId)
+	err = repo.DeleteProductUom(productID, uomID)
 	if err != nil {
 		handleError(err, w)
 		return

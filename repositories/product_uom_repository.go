@@ -1,50 +1,47 @@
-package models
+package repositories
 
 import (
 	"database/sql"
 	"errors"
+	e "github.com/sepernol/sim-pos-api/entities"
 	h "github.com/sepernol/sim-pos-api/helpers"
 )
 
-type ProductUom struct {
-	ProductId int64  `json:"product_id"`
-	UomId     int64  `json:"uom_id"`
-	UomDesc   string `json:"uom_desc"`
-}
-
-func DeleteProductUom(productId int64, uomId int64) (err error) {
+//DeleteProductUom deletes from database
+func DeleteProductUom(productID int64, uomID int64) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 
-	_, err = h.ExecStatement(db, "DELETE FROM product_uoms where product_id = ? AND uom_id = ? ", productId, uomId)
+	_, err = h.ExecStatement(db, "DELETE FROM product_uoms where product_id = ? AND uom_id = ? ", productID, uomID)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func InsertProductUom(data *ProductUom) (err error) {
+//InsertProductUom inserts to database
+func InsertProductUom(data *e.ProductUom) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 
-	_, err = h.ExecStatement(db, "INSERT INTO product_uoms (product_id, uom_id) VALUES (?, ?)", data.ProductId, data.UomId)
+	_, err = h.ExecStatement(db, "INSERT INTO product_uoms (product_id, uom_id) VALUES (?, ?)", data.ProductID, data.UomID)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func fetchProductUoms(rows *sql.Rows) (result []ProductUom, err error) {
-	result = make([]ProductUom, 0)
+func fetchProductUoms(rows *sql.Rows) (result []e.ProductUom, err error) {
+	result = make([]e.ProductUom, 0)
 	for rows.Next() {
-		var obj ProductUom
-		err = rows.Scan(&obj.ProductId, &obj.UomId, &obj.UomDesc)
+		var obj e.ProductUom
+		err = rows.Scan(&obj.ProductID, &obj.UomID, &obj.UomDesc)
 		if err != nil {
 			return
 		}
@@ -53,7 +50,8 @@ func fetchProductUoms(rows *sql.Rows) (result []ProductUom, err error) {
 	return
 }
 
-func GetProductUom(productId int64, uomId int64) (result ProductUom, err error) {
+//GetProductUom gets product uom by uom id and product id
+func GetProductUom(productID int64, uomID int64) (result e.ProductUom, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -67,7 +65,7 @@ func GetProductUom(productId int64, uomId int64) (result ProductUom, err error) 
 		"WHERE product_id = ? " +
 		"AND uom_id = ? "
 
-	rows, err := db.Query(query, productId, uomId)
+	rows, err := db.Query(query, productID, uomID)
 	if err != nil {
 		return
 	}
@@ -86,7 +84,8 @@ func GetProductUom(productId int64, uomId int64) (result ProductUom, err error) 
 	return
 }
 
-func GetProductUoms(productId int64) (result []ProductUom, err error) {
+//GetProductUoms gets all product uoms per product
+func GetProductUoms(productID int64) (result []e.ProductUom, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -99,7 +98,7 @@ func GetProductUoms(productId int64) (result []ProductUom, err error) {
 		"on u.id = pu.uom_id " +
 		"where product_id = ? "
 
-	rows, err := db.Query(query, productId)
+	rows, err := db.Query(query, productID)
 	if err != nil {
 		return
 	}
