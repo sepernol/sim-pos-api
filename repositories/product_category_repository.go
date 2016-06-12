@@ -1,26 +1,21 @@
-package models
+package repositories
 
 import (
 	"database/sql"
 	"errors"
+	e "github.com/sepernol/sim-pos-api/entities"
 	h "github.com/sepernol/sim-pos-api/helpers"
 )
 
-type ProductCategory struct {
-	Id          int64  `json:"id"`
-	Code        string `json:"code"`
-	Description string `json:"description"`
-}
-
-func fetchProductCategories(rows *sql.Rows, paging h.PageParams) (result []ProductCategory, err error) {
-	list := make([]ProductCategory, paging.Size)
+func fetchProductCategories(rows *sql.Rows, paging h.PageParams) (result []e.ProductCategory, err error) {
+	list := make([]e.ProductCategory, paging.Size)
 	index := 0
 	for rows.Next() {
 		if index >= paging.Size {
 			break
 		}
-		var obj ProductCategory
-		err = rows.Scan(&obj.Id, &obj.Code, &obj.Description)
+		var obj e.ProductCategory
+		err = rows.Scan(&obj.ID, &obj.Code, &obj.Description)
 		if err != nil {
 			return
 		}
@@ -31,7 +26,8 @@ func fetchProductCategories(rows *sql.Rows, paging h.PageParams) (result []Produ
 	return
 }
 
-func GetProductCategories(paging h.PageParams) (result []ProductCategory, err error) {
+//GetProductCategories gets list product categories with paging
+func GetProductCategories(paging h.PageParams) (result []e.ProductCategory, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -52,7 +48,8 @@ func GetProductCategories(paging h.PageParams) (result []ProductCategory, err er
 	return
 }
 
-func GetProductCategory(id int64) (result ProductCategory, err error) {
+//GetProductCategory gets product category by id
+func GetProductCategory(id int64) (result e.ProductCategory, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -80,7 +77,8 @@ func GetProductCategory(id int64) (result ProductCategory, err error) {
 	return
 }
 
-func InsertProductCategory(data *ProductCategory) (err error) {
+//InsertProductCategory inserts product category
+func InsertProductCategory(data *e.ProductCategory) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -91,18 +89,19 @@ func InsertProductCategory(data *ProductCategory) (err error) {
 	if err != nil {
 		return
 	}
-	data.Id = result.LastInsertId
+	data.ID = result.LastInsertId
 	return
 }
 
-func UpdateProductCategory(data *ProductCategory) (err error) {
+//UpdateProductCategory update product category
+func UpdateProductCategory(data *e.ProductCategory) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 
-	_, err = h.ExecStatement(db, "UPDATE product_categories SET code = ?, description = ? where id = ?", data.Code, data.Description, data.Id)
+	_, err = h.ExecStatement(db, "UPDATE product_categories SET code = ?, description = ? where id = ?", data.Code, data.Description, data.ID)
 	if err != nil {
 		return
 	}
@@ -110,6 +109,7 @@ func UpdateProductCategory(data *ProductCategory) (err error) {
 	return
 }
 
+//DeleteProductCategory deletes product category
 func DeleteProductCategory(id int64) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {

@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	e "github.com/sepernol/sim-pos-api/entities"
 	h "github.com/sepernol/sim-pos-api/helpers"
-	m "github.com/sepernol/sim-pos-api/models"
+	repo "github.com/sepernol/sim-pos-api/repositories"
 	"net/http"
 	"strconv"
 )
 
+//GetProductCategory handles GET method of /product-categories/:id
 func GetProductCategory(w http.ResponseWriter, r *http.Request) {
 	idStr := h.GetQueryParam(r, "id")
 	id, err := strconv.ParseInt(idStr, 10, 64)
@@ -14,7 +16,7 @@ func GetProductCategory(w http.ResponseWriter, r *http.Request) {
 		handleError(err, w)
 		return
 	}
-	result, err := m.GetProductCategory(id)
+	result, err := repo.GetProductCategory(id)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -22,13 +24,15 @@ func GetProductCategory(w http.ResponseWriter, r *http.Request) {
 	h.ResponseJSON(w, result)
 }
 
+//GetProductCategories handles GET method of
+// /product-categories/:size/page/:page_no
 func GetProductCategories(w http.ResponseWriter, r *http.Request) {
 	paging, err := h.GetPageParam(r)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
-	result, err := m.GetProductCategories(paging)
+	result, err := repo.GetProductCategories(paging)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -36,14 +40,15 @@ func GetProductCategories(w http.ResponseWriter, r *http.Request) {
 	h.ResponseJSON(w, result)
 }
 
+//PostProductCategory handles POST method of /product-categories
 func PostProductCategory(w http.ResponseWriter, r *http.Request) {
-	postData := &m.ProductCategory{}
+	postData := &e.ProductCategory{}
 	err := h.DecodeJSON(r, postData)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
-	err = m.InsertProductCategory(postData)
+	err = repo.InsertProductCategory(postData)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -51,16 +56,17 @@ func PostProductCategory(w http.ResponseWriter, r *http.Request) {
 	h.ResponseJSONAndMessage(w, postData, "Product Category Added")
 }
 
+//PutProductCategory handles PUT method of /product-categories/:id
 func PutProductCategory(w http.ResponseWriter, r *http.Request) {
-	postData := &m.ProductCategory{}
+	postData := &e.ProductCategory{}
 	err := h.DecodeJSON(r, postData)
 	if err != nil {
 		handleError(err, w)
 		return
 	}
 	id := h.GetQueryParam(r, "id")
-	postData.Id, err = strconv.ParseInt(id, 10, 64)
-	err = m.UpdateProductCategory(postData)
+	postData.ID, err = strconv.ParseInt(id, 10, 64)
+	err = repo.UpdateProductCategory(postData)
 	if err != nil {
 		handleError(err, w)
 		return
@@ -68,11 +74,12 @@ func PutProductCategory(w http.ResponseWriter, r *http.Request) {
 	h.ResponseJSONAndMessage(w, postData, "Product Category updated")
 }
 
+//DeleteProductCategory handles DELETE method of /product-categories/:id
 func DeleteProductCategory(w http.ResponseWriter, r *http.Request) {
 	id := h.GetQueryParam(r, "id")
 	idInt, err := strconv.ParseInt(id, 10, 64)
-	data, err := m.GetProductCategory(idInt)
-	err = m.DeleteProductCategory(idInt)
+	data, err := repo.GetProductCategory(idInt)
+	err = repo.DeleteProductCategory(idInt)
 	if err != nil {
 		handleError(err, w)
 		return
