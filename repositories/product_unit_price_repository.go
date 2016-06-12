@@ -1,47 +1,44 @@
-package models
+package repositories
 
 import (
 	"database/sql"
 	"errors"
+	e "github.com/sepernol/sim-pos-api/entities"
 	h "github.com/sepernol/sim-pos-api/helpers"
 )
 
-type ProductUnitPrice struct {
-	ProductId int64   `json:"product_id"`
-	UomId     int64   `json:"uom_id"`
-	UomDesc   string  `json:"uom_desc"`
-	UnitPrice float32 `json:"unit_price"`
-}
-
-func InsertProductUnitPrice(data *ProductUnitPrice) (err error) {
+//InsertProductUnitPrice inserts to database
+func InsertProductUnitPrice(data *e.ProductUnitPrice) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 
-	_, err = h.ExecStatement(db, "INSERT INTO product_unit_prices (product_id, uom_id, unit_price) VALUES (?, ?, ?)", data.ProductId, data.UomId, data.UnitPrice)
+	_, err = h.ExecStatement(db, "INSERT INTO product_unit_prices (product_id, uom_id, unit_price) VALUES (?, ?, ?)", data.ProductID, data.UomID, data.UnitPrice)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func UpdateProductUnitPrice(data *ProductUnitPrice) (err error) {
+//UpdateProductUnitPrice updates record in database
+func UpdateProductUnitPrice(data *e.ProductUnitPrice) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 
-	_, err = h.ExecStatement(db, "UPDATE product_unit_prices SET unit_price = ? WHERE product_id = ? AND uom_id = ?", data.UnitPrice, data.ProductId, data.UomId)
+	_, err = h.ExecStatement(db, "UPDATE product_unit_prices SET unit_price = ? WHERE product_id = ? AND uom_id = ?", data.UnitPrice, data.ProductID, data.UomID)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func GetProductUnitPrices(productId int64) (result []ProductUnitPrice, err error) {
+//GetProductUnitPrices gets list of unit price per product
+func GetProductUnitPrices(productID int64) (result []e.ProductUnitPrice, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -54,7 +51,7 @@ func GetProductUnitPrices(productId int64) (result []ProductUnitPrice, err error
 		"on u.id = pu.uom_id " +
 		"where product_id = ? "
 
-	rows, err := db.Query(query, productId)
+	rows, err := db.Query(query, productID)
 	if err != nil {
 		return
 	}
@@ -67,11 +64,11 @@ func GetProductUnitPrices(productId int64) (result []ProductUnitPrice, err error
 	return
 }
 
-func fetchProductUnitPrices(rows *sql.Rows) (result []ProductUnitPrice, err error) {
-	result = make([]ProductUnitPrice, 0)
+func fetchProductUnitPrices(rows *sql.Rows) (result []e.ProductUnitPrice, err error) {
+	result = make([]e.ProductUnitPrice, 0)
 	for rows.Next() {
-		var obj ProductUnitPrice
-		err = rows.Scan(&obj.ProductId, &obj.UomId, &obj.UomDesc, &obj.UnitPrice)
+		var obj e.ProductUnitPrice
+		err = rows.Scan(&obj.ProductID, &obj.UomID, &obj.UomDesc, &obj.UnitPrice)
 		if err != nil {
 			return
 		}
@@ -80,7 +77,8 @@ func fetchProductUnitPrices(rows *sql.Rows) (result []ProductUnitPrice, err erro
 	return
 }
 
-func GetProductUnitPrice(productId int64, uomId int64) (result ProductUnitPrice, err error) {
+//GetProductUnitPrice gets product unit price
+func GetProductUnitPrice(productID int64, uomID int64) (result e.ProductUnitPrice, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -94,7 +92,7 @@ func GetProductUnitPrice(productId int64, uomId int64) (result ProductUnitPrice,
 		"WHERE product_id = ? " +
 		"AND uom_id = ? "
 
-	rows, err := db.Query(query, productId, uomId)
+	rows, err := db.Query(query, productID, uomID)
 	if err != nil {
 		return
 	}
@@ -113,14 +111,15 @@ func GetProductUnitPrice(productId int64, uomId int64) (result ProductUnitPrice,
 	return
 }
 
-func DeleteProductUnitPrice(productId int64, uomId int64) (err error) {
+//DeleteProductUnitPrice deletes from database
+func DeleteProductUnitPrice(productID int64, uomID int64) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 
-	_, err = h.ExecStatement(db, "DELETE FROM product_unit_prices where product_id = ? AND uom_id = ? ", productId, uomId)
+	_, err = h.ExecStatement(db, "DELETE FROM product_unit_prices where product_id = ? AND uom_id = ? ", productID, uomID)
 	if err != nil {
 		return
 	}

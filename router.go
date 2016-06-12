@@ -60,7 +60,7 @@ func productRouter(pr *mux.Router) {
 	pr.HandleFunc("/{id}", handlers.DeleteProduct).Methods("DELETE")
 
 	productUomRouter(pr.PathPrefix("/{id}/uoms").Subrouter())
-	productUnitPriceRouter(pr.PathPrefix("/{id}/unit_prices").Subrouter())
+	productUnitPriceRouter(pr.PathPrefix("/{id}/unit-prices").Subrouter())
 }
 
 func productUomRouter(pru *mux.Router) {
