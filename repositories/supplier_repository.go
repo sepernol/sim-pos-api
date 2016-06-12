@@ -1,27 +1,21 @@
-package models
+package repositories
 
 import (
 	"database/sql"
 	"errors"
+	e "github.com/sepernol/sim-pos-api/entities"
 	h "github.com/sepernol/sim-pos-api/helpers"
 )
 
-type Supplier struct {
-	Id      int64  `json:"id"`
-	Code    string `json:"code"`
-	Name    string `json:"name"`
-	IsTaxed bool   `json:"is_taxed"`
-}
-
-func fetchSuppliers(rows *sql.Rows, paging h.PageParams) (result []Supplier, err error) {
-	list := make([]Supplier, paging.Size)
+func fetchSuppliers(rows *sql.Rows, paging h.PageParams) (result []e.Supplier, err error) {
+	list := make([]e.Supplier, paging.Size)
 	index := 0
 	for rows.Next() {
 		if index >= paging.Size {
 			break
 		}
-		var obj Supplier
-		err = rows.Scan(&obj.Id, &obj.Code, &obj.Name, &obj.IsTaxed)
+		var obj e.Supplier
+		err = rows.Scan(&obj.ID, &obj.Code, &obj.Name, &obj.IsTaxed)
 		if err != nil {
 			return
 		}
@@ -32,7 +26,8 @@ func fetchSuppliers(rows *sql.Rows, paging h.PageParams) (result []Supplier, err
 	return
 }
 
-func GetSuppliers(paging h.PageParams) (result []Supplier, err error) {
+//GetSuppliers gets list of suppliers paged
+func GetSuppliers(paging h.PageParams) (result []e.Supplier, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -53,7 +48,8 @@ func GetSuppliers(paging h.PageParams) (result []Supplier, err error) {
 	return
 }
 
-func GetSupplier(id int64) (result Supplier, err error) {
+//GetSupplier gets supplier by id
+func GetSupplier(id int64) (result e.Supplier, err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -81,7 +77,8 @@ func GetSupplier(id int64) (result Supplier, err error) {
 	return
 }
 
-func InsertSupplier(data *Supplier) (err error) {
+//InsertSupplier inserts supplier data
+func InsertSupplier(data *e.Supplier) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
@@ -92,18 +89,19 @@ func InsertSupplier(data *Supplier) (err error) {
 	if err != nil {
 		return
 	}
-	data.Id = result.LastInsertId
+	data.ID = result.LastInsertId
 	return
 }
 
-func UpdateSupplier(data *Supplier) (err error) {
+//UpdateSupplier updates supplier data
+func UpdateSupplier(data *e.Supplier) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 
-	_, err = h.ExecStatement(db, "UPDATE suppliers SET code = ?, name = ?, is_taxed = ? where id = ?", data.Code, data.Name, data.IsTaxed, data.Id)
+	_, err = h.ExecStatement(db, "UPDATE suppliers SET code = ?, name = ?, is_taxed = ? where id = ?", data.Code, data.Name, data.IsTaxed, data.ID)
 	if err != nil {
 		return
 	}
@@ -111,6 +109,7 @@ func UpdateSupplier(data *Supplier) (err error) {
 	return
 }
 
+//DeleteSupplier deletes supplier data
 func DeleteSupplier(id int64) (err error) {
 	db, err := h.GetDBConnection()
 	if err != nil {
